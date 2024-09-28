@@ -57,28 +57,21 @@ def astar(adj_list, start_node, target_node, h):
 def h(n):
     return 0
 
-if __name__ == "__main__":
-     adj_list = {
+# if __name__ == "__main__":
+def get_path():
+    adj_list = {
         'A': [('B', 1), ('C', 4)],
         'B': [('A', 1), ('C', 2), ('D', 5)],
         'C': [('A', 4), ('B', 2), ('D', 1)],
         'D': [('B', 5), ('C', 1)]
     }
-    graph = {
-    'P1': [('P2', 50), ('P3', 80), ('P8', 60)],
-    'P2': [('P1', 50), ('P6', 20)],
-    'P3': [('P1', 80), ('P4', 30)],
-    'P4': [('P3', 30), ('P5', 40)],
-    'P5': [('P4', 40), ('P7', 15)],
-    'P6': [('P2', 20), ('P7', 10)],
-    'P7': [('P6', 10), ('P5', 15)],
-    'P8': [('P1', 60)]
-}
+    with open('adj_list.json') as f:
+        graph = json.load(f)
+    start_node = 'p24'
+    target_node = 'p11'
     
-    start_node = 'A'
-    target_node = 'D'
-    
-    path = astar(adj_list, start_node, target_node, h)
+    path = astar(graph, start_node, target_node, h)
+    return path
     
     if path:
         print(f"Najkraći put od {start_node} do {target_node} je: {path}")

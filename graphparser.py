@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from matplotlib.animation import FuncAnimation
 import numpy as np
+from astar import get_path
 
 # Učitavanje grafa iz JSON fajla
 with open('testgraph.json') as f:
@@ -35,7 +36,8 @@ for edge in edges:
 pos = nx.get_node_attributes(G, 'pos')
 
 # Kreiranje putanje za tačku (primer)
-path = ["p8", "h1", "h5", "p2"]
+# path = ["p8", "h1", "h5", "p2"]
+path = get_path()
 
 # Parametri animacije
 speed_per_frame = 0.003  # Koliko jedinica (proporcija) će preći tačka po frejmu
@@ -95,21 +97,27 @@ plt.title("Graf sa tačkom koja se kreće konstantnom brzinom")
 plt.axis('off')
 plt.show()
 
-# Parsiranje u listu susedstva sa imenima čvorova
-i = 0
-node_map = {}
-for node in nodes:
-    node_map[i] = node['label']
-    i += 1
+# # Parsiranje u listu susedstva sa imenima čvorova
+# i = 0
+# node_map = {}
+# for node in nodes:
+#     node_map[i] = node['label']
+#     i += 1
 
-adj_list = {}
-for edge in edges:
-    if node_map[edge['source']] not in adj_list:
-        adj_list[node_map[edge['source']]] = []
+# adj_list = {}
+# for edge in edges:
+#     if node_map[edge['source']] not in adj_list:
+#         adj_list[node_map[edge['source']]] = []
 
-    adj_list[node_map[edge['source']]].append((node_map[edge['target']], 1))
+#     adj_list[node_map[edge['source']]].append((node_map[edge['target']], 1))
 
-# Čuvanje liste susedstva u JSON fajl
-with open('adj_list.json', 'w') as f:
-    json.dump(adj_list, f)
+#     if node_map[edge['target']] not in adj_list:
+#         adj_list[node_map[edge['target']]] = []
 
+#     adj_list[node_map[edge['target']]].append((node_map[edge['source']], 1))
+
+# # Čuvanje liste susedstva u JSON fajl
+# with open('adj_list.json', 'w') as f:
+#     json.dump(adj_list, f)
+
+# print(adj_list)
