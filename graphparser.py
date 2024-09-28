@@ -2,6 +2,7 @@ import json
 import matplotlib.pyplot as plt
 import networkx as nx
 from matplotlib.animation import FuncAnimation
+import matplotlib.image as mpimg  # Biblioteka za učitavanje slike
 import numpy as np
 from astar import get_path
 
@@ -36,7 +37,6 @@ for edge in edges:
 pos = nx.get_node_attributes(G, 'pos')
 
 # Kreiranje putanje za tačku (primer)
-# path = ["p8", "h1", "h5", "p2"]
 path = get_path()
 
 # Parametri animacije
@@ -63,8 +63,12 @@ def interpolate(p1, p2, alpha):
     y = (1 - alpha) * y1 + alpha * y2
     return x, y
 
+# Lista za čuvanje prethodnih pozicija tačke (plavi trag)
+trail_x = []
+trail_y = []
+
 # Funkcija za ažuriranje pozicije tačke tokom animacije
-def update(frame, path, point):
+def update(frame, path, point, line):
     # Računanje ukupne pređene udaljenosti do trenutnog frejma
     distance_traveled = frame * speed_per_frame
 
@@ -79,45 +83,36 @@ def update(frame, path, point):
             p1, p2 = path[i], path[i + 1]
             x, y = interpolate(p1, p2, alpha)
             point.set_data(x, y)  # Ažuriranje pozicije tačke
+
+            # Čuvanje prethodnih pozicija u trag (plavi trag)
+            trail_x.append(x)
+            trail_y.append(y)
+
+            # Ažuriranje linije (trag) sa novim pozicijama
+            line.set_data(trail_x, trail_y)
             break
-    return point,
+
+    return point, line
 
 # Crtanje osnovnog grafa
-plt.figure(figsize=(8, 6))
-nx.draw(G, pos, with_labels=True, node_size=500, node_color="skyblue", font_size=10, font_weight="bold")
+
+fig, ax = plt.subplots(figsize=(8, 6))
+nx.draw(G, pos, with_labels=True, node_size=500, node_color="skyblue", font_size=10, font_weight="bold", ax=ax)
+
+# Dodavanje roze linije koja prikazuje putanju po kojoj se tačka kreće
+path_points_x = [pos[node][0] for node in path]
+path_points_y = [pos[node][1] for node in path]
+ax.plot(path_points_x, path_points_y, color='pink', linewidth=2, linestyle='--', label='Planirana putanja')
 
 # Dodavanje plave tačke koja simulira kretanje
-point, = plt.plot([], [], 'bo', markersize=15)  # Plava tačka
+point, = ax.plot([], [], 'bo', markersize=15)  # Plava tačka
+line, = ax.plot([], [], color='blue', linewidth=2)  # Plavi trag tačke
 
 # Animacija kretanja tačke kroz čvorove sa konstantnom brzinom
-ani = FuncAnimation(plt.gcf(), update, frames=total_frames, fargs=(path, point), interval=50, repeat=False)
+ani = FuncAnimation(fig, update, frames=total_frames, fargs=(path, point, line), interval=50, repeat=False)
 
 # Prikazivanje grafa
-plt.title("Graf sa tačkom koja se kreće konstantnom brzinom")
+plt.title("Graf sa tačkom koja ostavlja plavi trag i roze putanju")
 plt.axis('off')
+plt.legend()
 plt.show()
-
-# # Parsiranje u listu susedstva sa imenima čvorova
-# i = 0
-# node_map = {}
-# for node in nodes:
-#     node_map[i] = node['label']
-#     i += 1
-
-# adj_list = {}
-# for edge in edges:
-#     if node_map[edge['source']] not in adj_list:
-#         adj_list[node_map[edge['source']]] = []
-
-#     adj_list[node_map[edge['source']]].append((node_map[edge['target']], 1))
-
-#     if node_map[edge['target']] not in adj_list:
-#         adj_list[node_map[edge['target']]] = []
-
-#     adj_list[node_map[edge['target']]].append((node_map[edge['source']], 1))
-
-# # Čuvanje liste susedstva u JSON fajl
-# with open('adj_list.json', 'w') as f:
-#     json.dump(adj_list, f)
-
-# print(adj_list)
