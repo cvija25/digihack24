@@ -40,3 +40,20 @@ nx.draw(G, pos, with_labels=True, node_size=500, node_color="skyblue", font_size
 plt.title("Graph Visualization")
 plt.show()
 
+
+## parsing to adjacency list with label names
+i = 0
+node_map = {}
+for node in nodes:
+    node_map[i] = node['label']
+    i = i+1
+
+adj_list = {}
+for edge in edges:
+    if node_map[edge['source']] not in adj_list:
+        adj_list[node_map[edge['source']]] = []
+
+    adj_list[node_map[edge['source']]].append((node_map[edge['target']],1))
+
+with open('adj_list.json', 'w') as f:
+    json.dump(adj_list, f)
