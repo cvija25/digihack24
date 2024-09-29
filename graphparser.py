@@ -2,7 +2,6 @@ import json
 import matplotlib.pyplot as plt
 import networkx as nx
 from matplotlib.animation import FuncAnimation
-import matplotlib.image as mpimg  # Biblioteka za učitavanje slike
 import numpy as np
 from astar import get_path
 
@@ -15,10 +14,11 @@ height = orig_graph['dimensions']['height']
 nodes = orig_graph['nodes']
 edges = orig_graph['edges']
 
-# Skaliranje koordinata čvorova
+# Skaliranje koordinata čvorova u odnosu na veličinu slike
+img_width, img_height = 10, 10  # Dimenzije slike (0, 10) x (0, 10)
 for node in nodes:
-    node['center']['x'] = node['center']['x'] / width
-    node['center']['y'] = node['center']['y'] / height
+    node['center']['x'] = node['center']['x'] / width * img_width
+    node['center']['y'] = node['center']['y'] / height * img_height
 
 # Kreiranje grafa NetworkX
 G = nx.Graph()
@@ -40,7 +40,7 @@ pos = nx.get_node_attributes(G, 'pos')
 path = get_path()
 
 # Parametri animacije
-speed_per_frame = 0.003  # Koliko jedinica (proporcija) će preći tačka po frejmu
+speed_per_frame = 0.03  # Koliko jedinica (proporcija) će preći tačka po frejmu
 
 # Funkcija za izračunavanje Euklidske udaljenosti između dve tačke
 def calculate_distance(p1, p2):
@@ -97,7 +97,9 @@ def update(frame, path, point, line):
 # Crtanje osnovnog grafa
 
 fig, ax = plt.subplots(figsize=(8, 6))
-nx.draw(G, pos, with_labels=True, node_size=500, node_color="skyblue", font_size=10, font_weight="bold", ax=ax)
+# Dodavanje pozadinske slike
+background = plt.imread("layout.jpeg")
+ax.imshow(background, extent=[0.5, img_width +0.5, 0.125, img_height + 0.125], aspect='auto')
 
 # Dodavanje roze linije koja prikazuje putanju po kojoj se tačka kreće
 path_points_x = [pos[node][0] for node in path]
