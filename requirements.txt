@@ -1,1 +1,4 @@
 networkx==3.3
+pygame
+numpy
+matplotlib

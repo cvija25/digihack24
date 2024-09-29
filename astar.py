@@ -1,6 +1,4 @@
 import json
-import copy
-from collections import defaultdict
 import numpy as np
 
 def get_next_node(open_set, heuristic_guess):
