@@ -1,6 +1,7 @@
 import json
 import copy
 from collections import defaultdict
+import numpy as np
 
 def get_next_node(open_set, heuristic_guess):
     v = None
@@ -23,7 +24,7 @@ def astar(adj_list, start_node, target_node, h):
     cheapest_paths[start_node] = 0
     
     heuristic_guess = {v:float('inf') for v in adj_list}
-    heuristic_guess[start_node] = h(start_node)
+    heuristic_guess[start_node] = h(start_node, target_node)
     
     path_found = False
     while len(open_set) > 0:
@@ -40,7 +41,7 @@ def astar(adj_list, start_node, target_node, h):
             if new_cheapest_path < cheapest_paths[neighbour_node]:
                 parents[neighbour_node] = current_node
                 cheapest_paths[neighbour_node] = new_cheapest_path
-                heuristic_guess[neighbour_node] = new_cheapest_path + h(neighbour_node)
+                heuristic_guess[neighbour_node] = new_cheapest_path + h(neighbour_node, target_node)
                 
                 if neighbour_node is not open_set:
                     open_set.add(neighbour_node)
@@ -54,7 +55,25 @@ def astar(adj_list, start_node, target_node, h):
     
     return path
 
-def h(n):
+def h(n, target_node):
+    with open('testgraph.json') as f:
+        data = json.load(f)
+
+    graph_coord = {}
+
+    for node in data["nodes"]:
+        label = node["label"]
+        x = int(node["center"]["x"])
+        y = int(node["center"]["y"])
+        graph_coord[label] = [x, y]
+
+    # Prikaz rezultata
+    #print(graph_coord)
+    
+    dist = (graph_coord[n][0] - graph_coord[target_node][0])**2 + (graph_coord[n][1] - graph_coord[target_node][1])**2 
+
+    dist = np.sqrt(dist)
+
     return 0
 
 # if __name__ == "__main__":
